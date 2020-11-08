@@ -1,9 +1,33 @@
 {
     "editor.fontSize": 24,
+    "php.suggest.basic": false,
+    "editor.quickSuggestions": {
+        "comments": true
+    },
     "files.associations": {
         "*.html": "twig"
     },
     "emmet.includeLanguages": {
         "twig": "html"
     },
+    "intelephense.files.exclude": [
+        "**/.git/**",
+        "**/.svn/**",
+        "**/.hg/**",
+        "**/CVS/**",
+        "**/.DS_Store/**",
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/vendor/**/{Tests,tests}/**/*Test.php",
+        "**/.history/**",
+        "**/vendor/**/vendor/**",
+        "**/app/**/cache/**",
+    ],
+    "files.watcherExclude": {
+        "**/app/cache/**": true
+    },
+    "files.exclude": {
+        "**/app/cache/**": true
+    },
+    "symfony-vscode.phpExecutablePath": "D:/wamp64/bin/php/php7.3.21/php",
 }
