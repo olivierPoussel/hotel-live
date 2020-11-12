@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -36,10 +37,15 @@ class User implements UserInterface
     private $roles = [];
 
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users", cascade={"persist"})
+     * @var Collection
+     * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users")
      */
     private $userRoles;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Customer::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $customer;
 
     public function __construct()
     {
@@ -114,7 +120,7 @@ class User implements UserInterface
             return $role->getName();
         })->toArray();
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -134,9 +140,9 @@ class User implements UserInterface
     }
 
     /**
-     * @return ArrayCollection|Role[]
+     * @return Collection|Role[]
      */
-    public function getUserRoles(): ArrayCollection
+    public function getUserRoles(): Collection
     {
         return $this->userRoles;
     }
@@ -155,6 +161,24 @@ class User implements UserInterface
     {
         if ($this->userRoles->removeElement($userRole)) {
             $userRole->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?Customer $customer): self
+    {
+        $this->customer = $customer;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $customer ? null : $this;
+        if ($customer->getUser() !== $newUser) {
+            $customer->setUser($newUser);
         }
 
         return $this;

@@ -34,16 +34,12 @@ class UserController extends AbstractController
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
-            /** @var Role */
-            foreach ($user->getUserRoles()->toArray() as $role) {
-                $role->addUser($user);
-                $entityManager->persist($role);
-            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
