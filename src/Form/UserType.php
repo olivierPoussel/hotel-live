@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Role;
 use App\Entity\User;
+use App\Repository\RoleRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -34,8 +35,11 @@ class UserType extends AbstractType
                 'class' => Role::class,
                 'multiple' => true,
                 'expanded' => true,
-                'choice_label' => 'name',
-                'choice_value' => 'id',
+                'query_builder' => function(RoleRepository $repo) {
+                    return $repo->createQueryBuilder('r');
+                }
+                // 'choice_label' => 'name',
+                // 'choice_value' => 'id',
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use($encoder){
                 /** @var USer */

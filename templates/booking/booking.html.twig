@@ -4,4 +4,32 @@
 
 {% block body %}
     {{ form(form) }}
+    <div class="my-3">
+        <p><span id="nbNight">...</span> nuit(s) à <span id="roomPrice">...</span> &euro; pour un total de <span id="total">...</span> &euro;</p>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        const dayDuration = 24 * 60 *60 * 1000;
+
+        let calculate = function () {
+            const startDate = new Date($('#{{form.startDate.vars.id}}').val());
+            const endDate = new Date($('#{{form.endDate.vars.id}}').val());
+            const price = $('#{{form.room.vars.id}} option:selected').attr('data-price');
+            if (price && startDate && endDate && startDate < endDate) {
+                const interval = endDate.getTime() - startDate.getTime();
+                const nbNight = interval / dayDuration;
+                const total = nbNight * price;
+                $('#nbNight').text(nbNight);
+                $('#roomPrice').text(price);
+                $('#total').text(total.toLocaleString('fr-FR'));
+            }
+        }
+        
+        $('#{{form.room.vars.id}}').on('change',calculate);
+        $('#{{form.startDate.vars.id}}').on('change',calculate);
+        $('#{{form.endDate.vars.id}}').on('change',calculate);
+    </script>
+
 {% endblock %}

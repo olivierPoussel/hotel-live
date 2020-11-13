@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\BookingRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\BookingRepository;
 
 /**
  * @ORM\Entity(repositoryClass=BookingRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Booking
 {
@@ -19,11 +22,15 @@ class Booking
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\Date()
+     * @Assert\GreaterThan("yesterday")
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\Date()
+     * @Assert\GreaterThan(propertyPath="startDate", message ="La date de fin doit etre suppérieur a la de date de début")
      */
     private $endDate;
 
@@ -40,6 +47,7 @@ class Booking
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="bookings")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank
      */
     private $customer;
 
@@ -124,5 +132,15 @@ class Booking
         $this->room = $room;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        if(empty($this->createdAt)) {
+            $this->createdAt = new DateTime();
+        }
     }
 }

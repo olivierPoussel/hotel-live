@@ -26,7 +26,7 @@ class Role
 
     /**
      * @var Collection
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="userRoles" , cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="userRoles")
      */
     private $users;
 
@@ -75,5 +75,10 @@ class Role
         $this->users->removeElement($user);
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

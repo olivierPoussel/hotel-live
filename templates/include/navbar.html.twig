@@ -10,12 +10,14 @@
           <span class="sr-only">(current)</span>
         </a>
       </li>
+      {% if app.user and is_granted('ROLE_ADMIN') %}
       <li class="nav-item">
         <a class="nav-link" href="{{path('user_index')}}">Users</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{path('booking')}}">Booking</a>
       </li>
+      {% endif %}
     </ul>
     <ul class="navbar-nav push-right mx-5">
     {% if app.user %}

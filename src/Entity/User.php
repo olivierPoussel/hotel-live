@@ -38,7 +38,8 @@ class User implements UserInterface
 
     /**
      * @var Collection
-     * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users")
+     * @ORM\ManyToMany(targetEntity=Role::class, inversedBy="users")
+     * @ORM\JoinTable(name="role_user")
      */
     private $userRoles;
 

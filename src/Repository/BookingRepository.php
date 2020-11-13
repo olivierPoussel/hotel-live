@@ -19,6 +19,50 @@ class BookingRepository extends ServiceEntityRepository
         parent::__construct($registry, Booking::class);
     }
 
+    /**
+     * check si la chambre est libre aux dates données.
+     *
+     * @param Booking
+     * 
+     * @return bool
+     */
+    public function checkDispo(Booking $booking)
+    {
+        $st = $booking->getStartDate()->format('Y-m-d');
+        $ed = $booking->getEndDate()->format('Y-m-d');
+        $qb= $this->createQueryBuilder('b');
+        $qb = $qb
+                ->innerJoin('b.room', 'r')
+                ->andWhere('r.id = :roomId')
+                ->setParameter('roomId', $booking->getRoom()->getId())
+                // ->andWhere("(b.startDate BETWEEN :std AND :edd or b.endDate BETWEEN :std AND :edd)")
+                ->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->between('b.startDate', ":std", ":edd"),
+                        $qb->expr()->between('b.endDate', ":std", ":edd")
+                    )
+                )
+                ->setParameter('std', $st)
+                ->setParameter('edd', $ed)
+        ;
+
+        $result = $qb->getQuery()->getResult();
+
+        // $sql ='SELECT * FROM `booking` WHERE room_id = :roomId and ((:std >= start_date and :std <= end_date) > 0 OR (:edd >= start_date and :edd <= end_date) > 0)';
+        // $stmt  = $this->_em->getConnection()->prepare($sql);
+        // $stmt->execute([
+        //     'roomId' => $booking->getRoom()->getId(),
+        //     'std'=> $booking->getStartDate()->format('Y-m-d H:i:s'),
+        //     'edd'=> $booking->getEndDate()->format('Y-m-d H:i:s'),
+        // ]);
+      
+        // // $result = $qb->getQuery()->getResult();
+      
+        // return $stmt->fetchAll();
+
+        return count($result) == 0;
+    }
+
     // /**
     //  * @return Booking[] Returns an array of Booking objects
     //  */
