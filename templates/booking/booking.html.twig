@@ -3,17 +3,55 @@
 {% block title %}Booking{% endblock %}
 
 {% block body %}
-    {{ form(form) }}
+    {{form_start(form)}}
+    {# {{ form(form) }} #}
+    {{form_widget(form.customer)}}
+
+    {{form_label(form.startDate)}}
+    
+    <div id="startDate" class="input-group date" data-provide="datepicker">
+        {{form_widget(form.startDate)}}
+        {# <input type="text" class="form-control"> #}
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span>
+        </div>
+    </div>
+
+    {{form_label(form.endDate)}}
+    {{form_widget(form.endDate)}}
+
+    {{form_label(form.room)}}
+    {{form_widget(form.room)}}
+
+    {{form_label(form.comment)}}
+    {{form_widget(form.comment)}}
+
+    {{form_widget(form.save)}}
+    {{form_end(form)}}
     <div class="my-3">
         <p><span id="nbNight">...</span> nuit(s) à <span id="roomPrice">...</span> &euro; pour un total de <span id="total">...</span> &euro;</p>
     </div>
 {% endblock %}
 
+{% block stylesheets %}
+<link rel="stylesheet" href="/css/bootstrap-datepicker.min.css">
+<style>
+    .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
+        color: red;
+    }
+</style>
+{% endblock %}
+
 {% block javascripts %}
+    {{parent()}}
+    <script src="/js/bootstrap-datepicker.min.js"></script>
+    <script src="/js/bootstrap-datepicker.fr.min.js"></script>
     <script>
+        //calcul de cout
         const dayDuration = 24 * 60 *60 * 1000;
 
         let calculate = function () {
+            // debugger;
             const startDate = new Date($('#{{form.startDate.vars.id}}').val());
             const endDate = new Date($('#{{form.endDate.vars.id}}').val());
             const price = $('#{{form.room.vars.id}} option:selected').attr('data-price');
@@ -26,10 +64,49 @@
                 $('#total').text(total.toLocaleString('fr-FR'));
             }
         }
+
+        let dateIndispoByRoom = function (e) {
+            let id = $(this).val();
+            let route = "/admin/booking/unvailable_date/"+id;
+            jQuery.ajax({
+                url : route, // Le nom du script a changé, c'est send_mail.php maintenant !
+                type : 'POST', // Le type de la requête HTTP, ici devenu POST
+                success : function(code_html, statut){ // success est toujours en place, bien sûr !
+           
+                },
+
+                error : function(resultat, statut, erreur){
+
+                }
+            });
+            // $.ajax({
+            //     url: route,
+                
+            //     method: 'POST',
+            //     success: function (data) {
+            //         console.log(data)
+            //     },
+            //     error: function (result) {
+            //         console.log(result)
+            //     }
+            // })
+        }
         
+        $('#{{form.room.vars.id}}').on('change',dateIndispoByRoom);
         $('#{{form.room.vars.id}}').on('change',calculate);
         $('#{{form.startDate.vars.id}}').on('change',calculate);
         $('#{{form.endDate.vars.id}}').on('change',calculate);
+
+        //date piker
+        $('#startDate').datepicker({
+                // format: 'dd/mm/yyyy',
+                format: 'yyyy-mm-dd',
+                startDate: new Date(),
+                language: "fr",
+                datesDisabled: ['2020-12-01']
+        });
+
+
     </script>
 
 {% endblock %}

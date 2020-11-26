@@ -45,7 +45,7 @@ class Booking
     private $comment;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="bookings")
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="bookings", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\NotBlank
      */
