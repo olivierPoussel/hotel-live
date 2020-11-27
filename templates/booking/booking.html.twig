@@ -16,9 +16,15 @@
             <span class="glyphicon glyphicon-th"></span>
         </div>
     </div>
-
+    
     {{form_label(form.endDate)}}
-    {{form_widget(form.endDate)}}
+    <div id="endDate" class="input-group date" data-provide="datepicker">
+        {{form_widget(form.endDate)}}
+        {# <input type="text" class="form-control"> #}
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span>
+        </div>
+    </div>
 
     {{form_label(form.room)}}
     {{form_widget(form.room)}}
@@ -34,12 +40,13 @@
 {% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="/css/bootstrap-datepicker.min.css">
-<style>
-    .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
-        color: red;
-    }
-</style>
+    {{parent()}}
+    <link rel="stylesheet" href="/css/bootstrap-datepicker.min.css">
+    <style>
+        .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
+            color: red;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -66,46 +73,43 @@
         }
 
         let dateIndispoByRoom = function (e) {
-            let id = $(this).val();
+            $('#{{form.startDate.vars.id}}').attr("disabled", 'disabled');
+            $('#{{form.endDate.vars.id}}').attr("disabled", 'disabled');
+            let id = $('#{{form.room.vars.id}} option:selected').val();
             let route = "/admin/booking/unvailable_date/"+id;
             jQuery.ajax({
-                url : route, // Le nom du script a changé, c'est send_mail.php maintenant !
-                type : 'POST', // Le type de la requête HTTP, ici devenu POST
-                success : function(code_html, statut){ // success est toujours en place, bien sûr !
-           
+                url : route, 
+                type : 'POST',
+                success : function(data, statut){
+                    console.log(data)
+                    $('#startDate').datepicker('setDatesDisabled', data)
+                    $('#endDate').datepicker('setDatesDisabled', data)
+                    $('#{{form.startDate.vars.id}}').removeAttr("disabled");
+                    $('#{{form.endDate.vars.id}}').removeAttr("disabled");
                 },
-
                 error : function(resultat, statut, erreur){
-
+                    console.log(resultat);
                 }
             });
-            // $.ajax({
-            //     url: route,
-                
-            //     method: 'POST',
-            //     success: function (data) {
-            //         console.log(data)
-            //     },
-            //     error: function (result) {
-            //         console.log(result)
-            //     }
-            // })
         }
         
         $('#{{form.room.vars.id}}').on('change',dateIndispoByRoom);
+
         $('#{{form.room.vars.id}}').on('change',calculate);
         $('#{{form.startDate.vars.id}}').on('change',calculate);
         $('#{{form.endDate.vars.id}}').on('change',calculate);
 
         //date piker
-        $('#startDate').datepicker({
+        $('#startDate, #endDate').datepicker({
                 // format: 'dd/mm/yyyy',
                 format: 'yyyy-mm-dd',
                 startDate: new Date(),
-                language: "fr",
-                datesDisabled: ['2020-12-01']
+                language: "fr"
         });
 
+        $(document).ready(function () {
+            dateIndispoByRoom()
+        })
 
     </script>
 

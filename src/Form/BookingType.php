@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Booking;
 use App\Entity\Customer;
 use App\Entity\Room;
+use App\Form\DataTransformer\DateTransformer;
 use DateTime;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -20,13 +21,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BookingType extends AbstractType
 {
+    private $dateTransformer;
+
+    public function __construct(DateTransformer $dateTransformer)
+    {
+        $this->dateTransformer = $dateTransformer;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('customer', CustomerType::class)
             // ->add('startDate', DateType::class, ['widget' =>'single_text'])
-            ->add('startDate', TextType::class)
-            ->add('endDate', DateType::class, ['widget' =>'single_text'])
+            ->add('startDate', TextType::class, ['attr' => ['disabled' => true]])
+            ->add('endDate', TextType::class, ['attr' => ['disabled' => true]])
             ->add('room', EntityType::class, [
                 'class' => Room::class,
                 'choice_label' => 'number',
@@ -41,20 +49,23 @@ class BookingType extends AbstractType
             ->add('save', SubmitType::class)
         ;
         $builder->get('startDate')
-        ->addModelTransformer(new CallbackTransformer(
-            function($date){
-                if($date) {
-                    return $date->format('Y-m-d');
-                }
-            },
-            function($dateString){
-                if($dateString) {
-                    return DateTime::createFromFormat('Y-m-d', $dateString );
+                ->addModelTransformer($this->dateTransformer);
+        $builder->get('endDate')
+                ->addModelTransformer($this->dateTransformer);
+        // ->addModelTransformer(new CallbackTransformer(
+        //     function($date){
+        //         if($date) {
+        //             return $date->format('Y-m-d');
+        //         }
+        //     },
+        //     function($dateString){
+        //         if($dateString) {
+        //             return DateTime::createFromFormat('Y-m-d', $dateString );
 
-                }
-            }
-            )
-        );
+        //         }
+        //     }
+        //     )
+        // );
     }
 
     public function configureOptions(OptionsResolver $resolver)
