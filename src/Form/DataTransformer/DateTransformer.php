@@ -36,7 +36,7 @@ class DateTransformer implements DataTransformerInterface
             throw new TransformationFailedException();
         }
 
-        $date = DateTime::createFromFormat('Y-m-d', $dateString);
+        $date = DateTime::createFromFormat('d/m/Y', $dateString);
 
         if($date === false) {
             throw new TransformationFailedException();

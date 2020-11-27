@@ -58,14 +58,14 @@
         const dayDuration = 24 * 60 *60 * 1000;
 
         let calculate = function () {
-            // debugger;
-            const startDate = new Date($('#{{form.startDate.vars.id}}').val());
-            const endDate = new Date($('#{{form.endDate.vars.id}}').val());
+            debugger;
+            const startDate = new Date($('#{{form.startDate.vars.id}}').val().split('/').reverse().join('-'));
+            const endDate = new Date($('#{{form.endDate.vars.id}}').val().split('/').reverse().join('-'));
             const price = $('#{{form.room.vars.id}} option:selected').attr('data-price');
             if (price && startDate && endDate && startDate < endDate) {
                 const interval = endDate.getTime() - startDate.getTime();
                 const nbNight = interval / dayDuration;
-                const total = nbNight * price;
+                const total = Math.round(nbNight * price);
                 $('#nbNight').text(nbNight);
                 $('#roomPrice').text(price);
                 $('#total').text(total.toLocaleString('fr-FR'));
@@ -101,8 +101,8 @@
 
         //date piker
         $('#startDate, #endDate').datepicker({
-                // format: 'dd/mm/yyyy',
-                format: 'yyyy-mm-dd',
+                format: 'dd/mm/yyyy',
+                // format: 'yyyy-mm-dd',
                 startDate: new Date(),
                 language: "fr"
         });

@@ -99,7 +99,7 @@ class BookingController extends AbstractController
             $period = new DatePeriod($startDate, $interval, $endDate); 
             // $nbJour = $endDate->diff($startDate)->days;
             foreach ($period as $date) {
-                $dates[] = $date->format('Y-m-d');
+                $dates[] = $date->format('d/m/Y');
             }
         }
 
