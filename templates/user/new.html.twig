@@ -9,3 +9,21 @@
 
     <a class="btn btn-primary" href="{{ path('user_index') }}">back to list</a>
 {% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/select2.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/select2.js"></script>
+    <script src="/js/select2fr.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('select').select2({
+                language: "fr"
+            });
+        })
+    </script>
+
+{% endblock %}

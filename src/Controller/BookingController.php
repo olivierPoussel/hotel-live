@@ -7,9 +7,7 @@ use App\Entity\Room;
 use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use App\Repository\CustomerRepository;
-use DateInterval;
-use DatePeriod;
-use DateTime;
+use App\Service\BookingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,44 +62,18 @@ class BookingController extends AbstractController
 
     /**
      * @Route("/booking/unvailable_date/{idRoom}", name="unvailableDateByRoom", methods={"POST"})
-     * @param Room $room
+     * 
+     * @param int               $idRoom
      * @param BookingRepository $bookingRepository
+     * @param BookingService    $bookingService
      * 
      * @return JsonResponse
      */
-    public function getUnvailableDateByRoom($idRoom, BookingRepository $bookingRepository)
+    public function getUnvailableDateByRoom($idRoom, BookingRepository $bookingRepository, BookingService $bookingService)
     {
-        $qb = $bookingRepository->createQueryBuilder('b');
+        $bookings = $bookingRepository->getBookingsByRoom($idRoom);
 
-        $bookings = $qb
-                    ->join('b.room', 'r')
-                    ->andWhere('r.id = :idRoom')
-                    ->setParameter('idRoom', $idRoom)
-                    ->andWhere(
-                        $qb->expr()->orX(
-                            $qb->expr()->andX('b.startDate >= :today'),
-                            $qb->expr()->andX('b.endDate >= :today')
-                        )
-                    )
-                    ->setParameter('today', new DateTime())
-                    ->addOrderBy('b.startDate','Asc')
-                    ->getQuery()
-                    ->getResult()
-        ;
-
-        $dates = [];
-        /** @var Booking */
-        foreach ($bookings as $booking) {
-            $startDate = $booking->getStartDate();
-            $endDate = $booking->getEndDate();
-            $interval = new DateInterval('P1D'); 
-            $endDate->add($interval);
-            $period = new DatePeriod($startDate, $interval, $endDate); 
-            // $nbJour = $endDate->diff($startDate)->days;
-            foreach ($period as $date) {
-                $dates[] = $date->format('d/m/Y');
-            }
-        }
+        $dates = $bookingService->getBookingsRangeDates($bookings);
 
         return new JsonResponse($dates);
     }

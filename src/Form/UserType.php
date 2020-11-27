@@ -34,7 +34,7 @@ class UserType extends AbstractType
             ->add('userRoles', EntityType::class, [
                 'class' => Role::class,
                 'multiple' => true,
-                'expanded' => true,
+                // 'expanded' => true,
                 'query_builder' => function(RoleRepository $repo) {
                     return $repo->createQueryBuilder('r');
                 }

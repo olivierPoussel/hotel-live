@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Booking;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -61,6 +62,36 @@ class BookingRepository extends ServiceEntityRepository
         // return $stmt->fetchAll();
 
         return count($result) == 0;
+    }
+
+    /**
+     * getBookingsByRoom
+     *
+     * @param int $idRoom
+     * 
+     * @return Booking[]
+     */
+    public function getBookingsByRoom($idRoom)
+    {
+        $qb = $this->createQueryBuilder('b');
+
+        $bookings = $qb
+                    ->join('b.room', 'r')
+                    ->andWhere('r.id = :idRoom')
+                    ->setParameter('idRoom', $idRoom)
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->andX('b.startDate >= :today'),
+                            $qb->expr()->andX('b.endDate >= :today')
+                        )
+                    )
+                    ->setParameter('today', new DateTime())
+                    ->addOrderBy('b.startDate','Asc')
+                    ->getQuery()
+                    ->getResult()
+        ;
+
+        return $bookings;
     }
 
     // /**
