@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Room{% endblock %}
+
+{% block body %}
+    <h1>Edit Room</h1>
+
+    {{ include('room/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('room_index') }}">back to list</a>
+
+    {{ include('room/_delete_form.html.twig') }}
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/select2.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/select2.js"></script>
+    <script src="/js/select2fr.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('select').select2({
+                language: "fr"
+            });
+        })
+    </script>
+
+{% endblock %}
