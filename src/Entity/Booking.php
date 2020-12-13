@@ -22,14 +22,12 @@ class Booking
 
     /**
      * @ORM\Column(type="date")
-     
      * @Assert\GreaterThan("yesterday")
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="date")
-     
      * @Assert\GreaterThan(propertyPath="startDate", message ="La date de fin doit etre suppérieur a la de date de début")
      */
     private $endDate;

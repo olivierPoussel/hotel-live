@@ -6,6 +6,7 @@ use App\Repository\OptionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=OptionRepository::class)
@@ -17,16 +18,19 @@ class Option
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("room_details")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("room_details")
      */
     private $name;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups("room_details")
      */
     private $price;
 

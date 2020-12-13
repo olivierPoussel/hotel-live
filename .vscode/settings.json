@@ -29,5 +29,5 @@
     "files.exclude": {
         "**/app/cache/**": true
     },
-    "symfony-vscode.phpExecutablePath": "D:/wamp64/bin/php/php7.3.21/php",
+    "debug.allowBreakpointsEverywhere": true,
 }

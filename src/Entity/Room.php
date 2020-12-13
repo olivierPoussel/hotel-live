@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\RoomRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RoomRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass=RoomRepository::class)
@@ -16,26 +18,31 @@ class Room
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("room_details")
      */
     private $id;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups("room_details")
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups("room_details")
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("room_details")
      */
     private $name;
 
     /**
      * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="rooms")
+     * @Groups("room_details")
      */
     private $options;
 
@@ -46,6 +53,7 @@ class Room
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("room_details")
      */
     private $image;
 
