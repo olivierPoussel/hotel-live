@@ -23,7 +23,7 @@ class RoomApiController extends AbstractController
      */
     public function allRoom(RoomRepository $roomRepository): JsonResponse
     {
-        return $this->json($roomRepository->getAllRoom());
+        return $this->json($roomRepository->getAllRoom(), 200, ['Access-Control-Allow-Origin' => '*']);
     }
 
     /**
@@ -45,6 +45,6 @@ class RoomApiController extends AbstractController
 
         $result = $serializer->serialize(['room' => $room,'UnavailableDate' => $dates], 'json', ['groups' => 'room_details']);
 
-        return $this->json($result);
+        return $this->json($result, 200, ['Access-Control-Allow-Origin' => '*']);
     }
 }
